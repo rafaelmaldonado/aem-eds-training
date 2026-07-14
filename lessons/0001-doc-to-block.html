@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 1 — From a Doc Table to a Decorated Block</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <p class="nav"><a href="../index.html">← Índice</a> · Lesson 01 · AEM Edge Delivery Services</p>
+  <h1>From a Doc Table to a Decorated Block</h1>
+  <p class="subtitle">The one pipeline that replaces components, dialogs, and HTL.</p>
+
+  <p>You already know the classic AEM loop: a component is a Java/Sling model + an
+  HTL template + a dialog, and the server renders it from the JCR. Edge Delivery
+  throws all of that out. There is <strong>no repository, no dialog, no server-side
+  rendering of your logic</strong>. Instead, a single pipeline turns a document into
+  HTML and then lets your JavaScript enhance it in the browser.</p>
+
+  <p>This lesson teaches that pipeline end to end. It's the mental model everything
+  else in EDS hangs off of.</p>
+
+  <div class="aha">
+    <strong>The unlearning:</strong> In classic AEM the author fills a <em>dialog</em>
+    and the server renders your <em>component</em>. In EDS the author writes a
+    <em>table in a Google Doc</em>, and the browser runs your <em>decorate()</em>
+    function. Same goal — reusable authored content — opposite machinery.
+  </div>
+
+  <h2>The four stages</h2>
+  <p>Every block travels the same road:</p>
+  <ol>
+    <li><strong>Author</strong> writes a table in a document. First row = the block name.</li>
+    <li><strong>The pipeline</strong> converts that table to clean, semantic
+      <code>&lt;div&gt;</code> markup — one div per row, one per cell.</li>
+    <li><strong>The block loader</strong> (in <code>scripts.js</code>) wraps it, adds
+      CSS classes and data attributes, and lazy-loads the block's code.</li>
+    <li><strong>Your <code>decorate(block)</code></strong> function reshapes that DOM
+      into whatever the design needs; your CSS styles it.</li>
+  </ol>
+
+  <h2>Stage 1 → 2: the table becomes DOM</h2>
+  <p>An author writes a two-row table whose header cell says <code>Hero</code>. That
+  single-cell block is delivered as this markup
+  (<a href="https://www.aem.live/developer/markup-sections-blocks">source</a>):</p>
+
+<pre><code>&lt;div class="hero"&gt;
+  &lt;div&gt;              &lt;!-- a row --&gt;
+    &lt;div&gt;            &lt;!-- a cell --&gt;
+      &lt;p&gt;Hello, World.&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+  <p>Note what the block name did: it became the <strong>folder</strong>
+  (<code>blocks/hero/</code>), the <strong>filenames</strong>
+  (<code>hero.js</code>, <code>hero.css</code>), <em>and</em> the
+  <strong>CSS class</strong> on the wrapper. One name, three jobs.</p>
+
+  <div class="note">
+    <strong>Block options</strong> are authored in parentheses:
+    <code>Hero (dark, wide)</code> → <code>class="hero dark wide"</code>. That's your
+    EDS equivalent of dialog fields that toggle a style variant — no dialog required.
+  </div>
+
+  <h2>Stage 3 → 4: decorate() reshapes it</h2>
+  <p>Each block is an ES module at <code>blocks/hero/hero.js</code> exporting a default
+  function. The loader calls it with the block element:</p>
+
+<pre><code>// blocks/hero/hero.js
+export default function decorate(block) {
+  // `block` is the &lt;div class="hero"&gt; above.
+  // Reshape the raw row/cell divs into the DOM your CSS wants.
+  const picture = block.querySelector('picture');
+  const text = block.querySelector('p:not(:has(picture))');
+  block.replaceChildren(picture, text); // flatten the wrapper divs
+}</code></pre>
+
+  <p>This is your render logic — but it runs <em>in the browser, after</em> semantic
+  HTML already exists. That's why EDS pages are fast and SEO-friendly even before your
+  JS runs: stage 2 already shipped meaningful markup.</p>
+
+  <h2>Classic AEM vs. EDS at a glance</h2>
+  <div class="contrast">
+    <div class="old head">Classic AEM</div>
+    <div class="new head">Edge Delivery</div>
+    <div class="old">Component = Java model + HTL + dialog</div>
+    <div class="new">Block = <code>name.js</code> + <code>name.css</code></div>
+    <div class="old">Author fills a dialog</div>
+    <div class="new">Author writes a table (name in row 1)</div>
+    <div class="old">Server renders from the JCR</div>
+    <div class="new">Pipeline emits divs; browser runs <code>decorate()</code></div>
+    <div class="old">Style variants via dialog + CSS</div>
+    <div class="new">Style variants via <code>Block (option)</code> classes</div>
+    <div class="old">Sling models, OSGi, repo</div>
+    <div class="new">Vanilla JS/CSS, git, no repo</div>
+  </div>
+
+  <h2>Check yourself</h2>
+  <p>Retrieval beats re-reading. Answer before you scroll back up.</p>
+
+  <div class="quiz" data-answer="2">
+    <div class="q">An author creates a table with <code>Cards</code> in the first row.
+      What three things does the name "Cards" determine?</div>
+    <button class="opt">The JCR node type, the dialog, the servlet path</button>
+    <button class="opt">The page template, the theme, the URL slug</button>
+    <button class="opt">The block folder, the JS/CSS filenames, and the CSS class</button>
+    <button class="opt">The author's permissions, the language, the section</button>
+    <div class="feedback"
+      data-correct="Exactly — one name, three jobs. That's the naming convention that wires a block together."
+      data-wrong="Re-read 'Stage 1 → 2'. The block name maps to folder, filenames, and the wrapper CSS class."></div>
+  </div>
+
+  <div class="quiz" data-answer="1">
+    <div class="q">When does your <code>decorate()</code> function run?</div>
+    <button class="opt">On the server, during page rendering, before HTML is sent</button>
+    <button class="opt">In the browser, after semantic HTML already exists</button>
+    <button class="opt">At build time, compiled into static HTML</button>
+    <button class="opt">Never — blocks are pure CSS with no JavaScript</button>
+    <div class="feedback"
+      data-correct="Right. Stage 2 ships semantic markup; your JS enhances it client-side. That split is why EDS is fast and SEO-friendly."
+      data-wrong="Re-read 'Stage 3 → 4'. decorate() runs client-side, after the pipeline has already delivered semantic divs."></div>
+  </div>
+
+  <h2>Do this next (10 min)</h2>
+  <p>Read the primary source for this lesson — it's short and authoritative:</p>
+  <blockquote>
+    <a href="https://www.aem.live/developer/markup-sections-blocks">aem.live — Markup, Sections &amp; Blocks</a>
+    — the canonical explanation of the doc→DOM→decorate pipeline.
+  </blockquote>
+  <p>Then skim one real block's <code>decorate()</code> to see the pattern in the wild:
+  the <a href="https://github.com/adobe/aem-block-collection/tree/main/blocks/cards">Cards block source</a>.</p>
+
+  <div class="note">
+    <strong>I'm your teacher — ask me anything.</strong> Stuck on how sections differ
+    from blocks? Want to know where the pipeline lives, or how this compares to a
+    specific classic-AEM concept you know? Ask. Next lesson we'll stand up the
+    boilerplate and run a block locally with <code>aem up</code>.
+  </div>
+
+  <footer>
+    Lesson 01 · <a href="../MISSION.md">Mission</a> ·
+    <a href="../RESOURCES.md">Resources</a><br>
+    Wisdom comes from practice with others — the
+    <a href="https://discord.gg/aem-live">AEM Live Discord</a> is where real EDS
+    devs answer questions.
+  </footer>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>

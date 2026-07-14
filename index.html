@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aprender AEM Edge Delivery Services</title>
+  <link rel="stylesheet" href="assets/lesson.css">
+  <style>
+    /* ponytail: page-local layout, not worth a shared component for one landing page */
+    .hero-head { border-bottom: 2px solid var(--accent); padding-bottom: 1rem; margin-bottom: 2rem; }
+    .lessons { list-style: none; padding: 0; }
+    .lessons li { margin: 0; }
+    .card {
+      display: block; border: 1px solid var(--rule); border-radius: 8px;
+      padding: 1.1rem 1.3rem; margin: 1rem 0; background: #fff;
+      border-bottom: 1px solid var(--rule); transition: box-shadow .15s, transform .15s;
+    }
+    .card:hover { box-shadow: 0 4px 14px rgba(0,0,0,.08); transform: translateY(-2px); }
+    .card .num { font-family: sans-serif; font-size: .75rem; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--muted); }
+    .card .title { font-family: sans-serif; font-weight: 600; font-size: 1.15rem;
+      color: var(--ink); margin: .2rem 0; }
+    .card .desc { color: var(--muted); font-size: .95rem; margin: 0; }
+    .card .tag { display: inline-block; font-family: sans-serif; font-size: .72rem;
+      background: var(--code-bg); color: var(--muted); padding: .1rem .5rem;
+      border-radius: 4px; margin-top: .5rem; }
+    .soon { opacity: .55; }
+    .soon:hover { box-shadow: none; transform: none; cursor: default; }
+    .links { font-family: sans-serif; font-size: .9rem; }
+  </style>
+</head>
+<body>
+  <div class="hero-head">
+    <p class="nav">Curso · Upskilling desde AEM clásico</p>
+    <h1>AEM Edge Delivery Services</h1>
+    <p class="subtitle">Aprende EDS por contraste con el AEM que ya conoces.</p>
+  </div>
+
+  <p>Un curso corto y práctico sobre Edge Delivery Services (EDS / "Franklin").
+  Cada lección es autocontenida, se completa rápido y da una victoria concreta.
+  Empieza por la primera y avanza en orden.</p>
+
+  <h2>Índice de lecciones</h2>
+  <ul class="lessons">
+    <li>
+      <a class="card" href="lessons/0001-doc-to-block.html">
+        <span class="num">Lección 01</span>
+        <div class="title">De una tabla en un Doc a un bloque decorado</div>
+        <p class="desc">El pipeline que reemplaza componentes, diálogos y HTL:
+          documento → DOM semántico → <code>decorate()</code> en el navegador.</p>
+        <span class="tag">Modelo mental · Fundamentos</span>
+      </a>
+    </li>
+    <li>
+      <div class="card soon">
+        <span class="num">Lección 02</span>
+        <div class="title">Levantar el boilerplate y correr un bloque en local</div>
+        <p class="desc">De la teoría a la práctica: <code>aem up</code>, el repo
+          boilerplate y Sidekick. <em>Próximamente.</em></p>
+        <span class="tag">En preparación</span>
+      </div>
+    </li>
+  </ul>
+
+  <footer>
+    <p class="links">
+      <a href="MISSION.md">Misión</a> ·
+      <a href="RESOURCES.md">Recursos</a> ·
+      <a href="https://discord.gg/aem-live">Comunidad (Discord AEM Live)</a>
+    </p>
+    <p>¿Dudas sobre alguna lección? Soy tu profesor — pregúntame lo que necesites.</p>
+  </footer>
+</body>
+</html>

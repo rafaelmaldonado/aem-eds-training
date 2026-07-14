@@ -1,0 +1,60 @@
+/* Shared lesson stylesheet — Tufte-inspired. Linked by every lesson. */
+:root {
+  --ink: #1a1a1a;
+  --muted: #6b6b6b;
+  --rule: #ddd;
+  --accent: #b5482e;
+  --bg: #fffdf9;
+  --code-bg: #f4f1ea;
+  --old: #7a5c00;   /* "classic AEM" contrast callouts */
+  --new: #2e6b45;   /* "EDS" contrast callouts */
+  --maxw: 44rem;
+}
+* { box-sizing: border-box; }
+body {
+  font-family: Georgia, "Iowan Old Style", "Palatino Linotype", serif;
+  color: var(--ink);
+  background: var(--bg);
+  line-height: 1.55;
+  max-width: var(--maxw);
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+  font-size: 1.12rem;
+}
+h1, h2, h3 { font-family: -apple-system, "Segoe UI", Helvetica, sans-serif; line-height: 1.2; }
+h1 { font-size: 2rem; margin-bottom: .2rem; }
+.subtitle { color: var(--muted); font-style: italic; margin-top: 0; }
+h2 { font-size: 1.35rem; margin-top: 2.5rem; border-bottom: 1px solid var(--rule); padding-bottom: .3rem; }
+h3 { font-size: 1.1rem; margin-top: 1.8rem; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(181,72,46,.3); }
+a:hover { border-bottom-color: var(--accent); }
+code, pre { font-family: "SF Mono", "Fira Code", Consolas, monospace; font-size: .88em; }
+code { background: var(--code-bg); padding: .1em .35em; border-radius: 3px; }
+pre { background: var(--code-bg); padding: 1rem 1.2rem; border-radius: 6px; overflow-x: auto; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+blockquote { border-left: 3px solid var(--accent); margin: 1.5rem 0; padding: .3rem 1.2rem; color: var(--muted); font-style: italic; }
+
+/* Classic-AEM → EDS contrast table */
+.contrast { display: grid; grid-template-columns: 1fr 1fr; gap: 0; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; margin: 1.5rem 0; }
+.contrast > div { padding: .8rem 1rem; font-size: .95rem; }
+.contrast .head { font-family: sans-serif; font-weight: 600; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+.contrast .old { background: #fdf8ec; border-right: 1px solid var(--rule); }
+.contrast .new { background: #eef7f0; }
+.contrast .old.head { color: var(--old); }
+.contrast .new.head { color: var(--new); }
+
+/* Callout boxes */
+.note { background: #eef7f0; border-left: 3px solid var(--new); padding: .8rem 1.1rem; border-radius: 0 6px 6px 0; margin: 1.5rem 0; font-size: .98rem; }
+.aha { background: #fdf8ec; border-left: 3px solid var(--old); padding: .8rem 1.1rem; border-radius: 0 6px 6px 0; margin: 1.5rem 0; font-size: .98rem; }
+
+/* Quiz widget (see assets/quiz.js) */
+.quiz { border: 1px solid var(--rule); border-radius: 8px; padding: 1.2rem 1.4rem; margin: 1.8rem 0; background: #fff; }
+.quiz .q { font-weight: 600; font-family: sans-serif; margin-bottom: .8rem; }
+.quiz button.opt { display: block; width: 100%; text-align: left; margin: .4rem 0; padding: .6rem .9rem; border: 1px solid var(--rule); border-radius: 6px; background: #fff; font: inherit; font-size: .95rem; cursor: pointer; transition: background .15s; }
+.quiz button.opt:hover { background: var(--code-bg); }
+.quiz button.opt.correct { background: #d9f0e0; border-color: var(--new); }
+.quiz button.opt.wrong { background: #f7dcd4; border-color: var(--accent); }
+.quiz .feedback { margin-top: .8rem; font-size: .95rem; min-height: 1.2em; }
+
+footer { margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem; color: var(--muted); font-size: .9rem; }
+.nav { font-family: sans-serif; font-size: .85rem; }
