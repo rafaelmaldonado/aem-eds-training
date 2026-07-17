@@ -16,3 +16,9 @@
 Lean on my existing AEM knowledge — teach by contrast ("in classic AEM you did X; in EDS you do Y"). The big unlearning: no server-side component rendering, no dialogs, no repository. Content is a document; a block is a table; enhancement is client-side JS.
 
 _Last updated: 2026-07-13. Confirm before changing this mission._
+
+## Progreso (hub)
+El landing (`learning/index.html`) calcula el avance de este curso como
+**lecciones en `lessons/` ÷ total planeado**, contadas en vivo vía la GitHub API.
+Cada archivo `lessons/NNNN-*.html` que construyas sube la barra automáticamente.
+- **Total planeado:** 25 lecciones (estimado; ajústalo aquí y en `PROJECTS[].total` del hub si cambia el plan).
