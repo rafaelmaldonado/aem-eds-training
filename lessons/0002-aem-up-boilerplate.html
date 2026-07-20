@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 2 — Stand Up the Boilerplate & Run It Locally</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <p class="nav"><a href="../index.html">← Index</a> · Lesson 02 · AEM Edge Delivery Services</p>
+  <h1>Stand Up the Boilerplate &amp; Run It Locally</h1>
+  <p class="subtitle">Your first EDS project — no Maven, no archetype, no local AEM instance.</p>
+
+  <p>In <a href="0001-doc-to-block.html">Lesson 1</a> you learned the doc→DOM→<code>decorate()</code>
+  pipeline. Now you'll turn that knowledge into a skill: get a real project running on
+  your machine. The whole goal of this lesson is to see <code>localhost:3000</code>
+  serve an EDS page you can edit live.</p>
+
+  <div class="aha">
+    <strong>The unlearning:</strong> There's no local AEM server. <code>aem up</code>
+    is a tiny <em>proxy</em> — it serves your local <code>blocks/</code>, <code>styles/</code>,
+    and <code>scripts/</code>, but fetches the actual <em>content</em> (the rendered DOM)
+    from your <code>.aem.page</code> preview in the cloud. Code is local; content is remote.
+  </div>
+
+  <h2>Classic AEM setup vs. EDS setup</h2>
+  <div class="contrast">
+    <div class="old head">Classic AEM</div>
+    <div class="new head">Edge Delivery</div>
+    <div class="old">Maven archetype generates the project</div>
+    <div class="new">GitHub "Use this template" from <code>aem-boilerplate</code></div>
+    <div class="old">Run a local AEM quickstart JAR (<code>~2 GB</code> of RAM)</div>
+    <div class="new"><code>aem up</code> — a Node proxy, seconds to start</div>
+    <div class="old"><code>mvn clean install -PautoInstallPackage</code> to deploy</div>
+    <div class="new"><code>git push</code> — code sync deploys automatically</div>
+    <div class="old">Content lives in your local repo (JCR)</div>
+    <div class="new">Content served from cloud preview (<code>.aem.page</code>)</div>
+  </div>
+
+  <h2>The five steps</h2>
+  <p>All quoted from the official
+  <a href="https://www.aem.live/developer/tutorial">aem.live developer tutorial</a>.</p>
+
+  <ol>
+    <li><strong>Create your repo from the template.</strong> Open
+      <a href="https://github.com/adobe/aem-boilerplate">github.com/adobe/aem-boilerplate</a>,
+      click <em>Use this template → Create a new repository</em>. Make it public.</li>
+
+    <li><strong>Install the AEM Code Sync GitHub app</strong> on that repo
+      (<a href="https://github.com/apps/aem-code-sync/installations/new">install link</a>) —
+      choose <em>Only select repositories</em> and pick your new one. This is what makes
+      <code>git push</code> deploy. Your site now lives at:
+<pre><code>https://&lt;branch&gt;--&lt;repo&gt;--&lt;owner&gt;.aem.page/</code></pre></li>
+
+    <li><strong>Install the CLI and clone:</strong>
+<pre><code>npm install -g @adobe/aem-cli
+git clone https://github.com/&lt;owner&gt;/&lt;repo&gt;</code></pre></li>
+
+    <li><strong>Start the local dev server:</strong>
+<pre><code>cd &lt;repo&gt;
+aem up</code></pre>
+      This opens <code>http://localhost:3000/</code>.</li>
+
+    <li><strong>Edit and watch.</strong> Change any file under <code>blocks/</code> or
+      <code>styles/</code> and the browser reflects it immediately. To deploy: add,
+      commit, push — code sync updates preview (<code>.aem.page</code>) and production
+      (<code>.aem.live</code>).</li>
+  </ol>
+
+  <div class="note">
+    <strong>Where does the content come from?</strong> The boilerplate ships wired to a
+    demo content source. <code>aem up</code> pulls page content from your preview and
+    overlays your <em>local</em> code on top — so you develop code offline while authoring
+    happens in Docs/DA. We'll cover connecting your own content source and the
+    preview/publish model in a later lesson.
+  </div>
+
+  <h2>Check yourself</h2>
+  <p>Answer from memory before scrolling back.</p>
+
+  <div class="quiz" data-answer="2">
+    <div class="q">What does <code>aem up</code> actually serve from your machine?</div>
+    <button class="opt">A full local AEM author instance from a quickstart JAR file</button>
+    <button class="opt">The page content and the DOM rendered from a local JCR repo</button>
+    <button class="opt">Your local code, while fetching page content from the cloud preview</button>
+    <button class="opt">A production build compiled once into static HTML output files</button>
+    <div class="feedback"
+      data-correct="Right — it's a proxy: local code (blocks/styles/scripts) over remote content from .aem.page."
+      data-wrong="Re-read the 'unlearning' box. aem up serves local code but fetches content from your .aem.page preview."></div>
+  </div>
+
+  <div class="quiz" data-answer="1">
+    <div class="q">How does your code get deployed to preview and production?</div>
+    <button class="opt">Run a Maven build with the autoInstallPackage profile enabled</button>
+    <button class="opt">Push to GitHub — the AEM Code Sync app deploys it for you</button>
+    <button class="opt">Upload a content package through the AEM package manager UI</button>
+    <button class="opt">Copy the built files onto the dispatcher server over SSH</button>
+    <div class="feedback"
+      data-correct="Exactly — the Code Sync app watches your repo; git push is the deploy step."
+      data-wrong="Re-read step 2 and step 5. The Code Sync GitHub app turns git push into a deploy."></div>
+  </div>
+
+  <div class="quiz" data-answer="0">
+    <div class="q">Which command installs the CLI you run to develop locally?</div>
+    <button class="opt"><code>npm install -g @adobe/aem-cli</code></button>
+    <button class="opt"><code>npm create @adobe/aem-boilerplate app</code></button>
+    <button class="opt"><code>mvn archetype:generate -DarchetypeGroup</code></button>
+    <button class="opt"><code>git clone github.com/adobe/aem-cli tool</code></button>
+    <div class="feedback"
+      data-correct="Correct — one global npm install, then aem up inside the repo."
+      data-wrong="Re-read step 3. The CLI is a global npm package: npm install -g @adobe/aem-cli."></div>
+  </div>
+
+  <h2>Do this next (15 min)</h2>
+  <p>This is a hands-on lesson — actually run it. Create the repo, install the app,
+  <code>aem up</code>, and open <code>localhost:3000</code>. The primary source walks
+  every step with screenshots:</p>
+  <blockquote>
+    <a href="https://www.aem.live/developer/tutorial">aem.live — Developer Tutorial</a>
+    — the canonical 15-minute "boilerplate to running site" walkthrough.
+  </blockquote>
+  <p>Once it's running, edit a color in <code>styles/styles.css</code> and watch the
+  browser update. That's your tangible win.</p>
+
+  <div class="note">
+    <strong>I'm your teacher — ask me anything.</strong> <code>aem up</code> throwing an
+    error? Not sure what URL your preview is on, or how to point the boilerplate at your
+    own Google Doc? Ask. Next lesson: the content source + preview/publish model
+    (Sidekick, <code>.aem.page</code> vs <code>.aem.live</code>).
+  </div>
+
+  <footer>
+    Lesson 02 · <a href="../MISSION.md">Mission</a> ·
+    <a href="../RESOURCES.md">Resources</a><br>
+    Stuck on setup? Real EDS devs answer fast on the
+    <a href="https://discord.gg/aem-live">AEM Live Discord</a>.
+  </footer>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
