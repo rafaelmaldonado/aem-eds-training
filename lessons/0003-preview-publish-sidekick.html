@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 3 — Content, Preview &amp; Publish with Sidekick</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <p class="nav"><a href="../index.html">← Index</a> · Lesson 03 · AEM Edge Delivery Services</p>
+  <h1>Content, Preview &amp; Publish with Sidekick</h1>
+  <p class="subtitle">Where the content lives, and the two-step road from a doc to the live site.</p>
+
+  <p>In <a href="0002-aem-up-boilerplate.html">Lesson 2</a> you ran <code>aem up</code> and saw
+  it serve <em>local code over remote content</em>. This lesson answers the obvious next
+  question: <strong>where is that content, and how does an edit become a live page?</strong>
+  In classic AEM you knew this cold — author, activate, dispatcher. EDS keeps the two-step
+  shape but changes every piece.</p>
+
+  <div class="aha">
+    <strong>The unlearning:</strong> There's no JCR and no dispatcher flush. Content is a
+    <em>document</em> (Google Docs / SharePoint / <a href="https://da.live">DA</a>). You
+    <strong>Preview</strong> it to <code>.aem.page</code> (a staging URL), then
+    <strong>Publish</strong> it to <code>.aem.live</code> (production). Sidekick is the
+    little toolbar that fires both — your author/activate buttons, living in the browser.
+  </div>
+
+  <h2>The two environments</h2>
+  <p>Every EDS project has two host suffixes. Same path, two states of the same page
+  (<a href="https://www.aem.live/docs/authoring">source</a>):</p>
+  <div class="contrast">
+    <div class="old head">Preview — .aem.page</div>
+    <div class="new head">Live — .aem.live</div>
+    <div class="old">Staging: what authors &amp; devs see</div>
+    <div class="new">Production: what the public sees</div>
+    <div class="old">Updated by <strong>Preview</strong> in Sidekick</div>
+    <div class="new">Updated by <strong>Publish</strong> in Sidekick</div>
+    <div class="old"><code>aem up</code> pulls content from here</div>
+    <div class="new">Served fast from the CDN edge</div>
+  </div>
+
+  <h2>Classic AEM vs. EDS: same shape, new parts</h2>
+  <div class="contrast">
+    <div class="old head">Classic AEM</div>
+    <div class="new head">Edge Delivery</div>
+    <div class="old">Content authored in the JCR via TouchUI</div>
+    <div class="new">Content authored in a Doc (Docs / SharePoint / DA)</div>
+    <div class="old">Author instance = staging preview</div>
+    <div class="new"><code>.aem.page</code> preview (Preview button)</div>
+    <div class="old">Activate → replicate to publish</div>
+    <div class="new">Publish → <code>.aem.live</code> (Publish button)</div>
+    <div class="old">Dispatcher cache + flush</div>
+    <div class="new">CDN edge, invalidated on publish</div>
+    <div class="old">AEM authoring UI</div>
+    <div class="new">Sidekick browser extension</div>
+  </div>
+
+  <h2>What connects a doc to your project?</h2>
+  <p>A single config file in your repo, <code>fstab.yaml</code>, maps your site to its
+  content source — the Drive folder, SharePoint site, or DA path. That mapping is why
+  the pipeline knows which document backs which URL
+  (<a href="https://www.aem.live/developer/tutorial">source</a>).</p>
+<pre><code># fstab.yaml — mountpoints: URL path → content source
+mountpoints:
+  /: https://drive.google.com/drive/folders/&lt;folder-id&gt;</code></pre>
+
+  <h2>The Preview → Publish loop</h2>
+  <ol>
+    <li><strong>Install Sidekick</strong> — the
+      <a href="https://www.aem.live/tools/sidekick/">AEM Sidekick</a> browser extension —
+      and add your project (its bookmarklet/config points at your repo).</li>
+    <li><strong>Edit the document</strong> in Docs/DA. Nothing is live yet; the doc is
+      just a doc.</li>
+    <li><strong>Preview.</strong> Open the doc, click <strong>Preview</strong> in Sidekick.
+      The page renders at <code>&lt;branch&gt;--&lt;repo&gt;--&lt;owner&gt;.aem.page/&lt;path&gt;</code>.
+      This is also the content <code>aem up</code> overlays your local code onto.</li>
+    <li><strong>Publish.</strong> Happy with it? Click <strong>Publish</strong>. The page
+      goes live at the matching <code>.aem.live</code> URL and the CDN is updated.</li>
+  </ol>
+
+  <div class="note">
+    <strong>Code vs. content — two independent pipelines.</strong> <code>git push</code>
+    deploys <em>code</em> (from Lesson 2). Preview/Publish moves <em>content</em>. They
+    meet only at render time: published content + deployed code = the live page. Changing
+    a block's JS never requires re-publishing a doc, and vice versa.
+  </div>
+
+  <h2>Check yourself</h2>
+  <p>Answer from memory before scrolling back.</p>
+
+  <div class="quiz" data-answer="1">
+    <div class="q">In EDS, where does the content of a page actually live?</div>
+    <button class="opt">Inside the JCR repository on the local author server node</button>
+    <button class="opt">In a document — Google Docs, SharePoint, or DA authoring</button>
+    <button class="opt">As static HTML files committed into the project git repo</button>
+    <button class="opt">In an OSGi content package deployed through the CRX UI</button>
+    <div class="feedback"
+      data-correct="Right — content is a document. fstab.yaml maps that source to your site's URLs."
+      data-wrong="Re-read the 'unlearning' box. Content is a doc (Docs/SharePoint/DA), not the JCR."></div>
+  </div>
+
+  <div class="quiz" data-answer="2">
+    <div class="q">What is the role of the <code>.aem.page</code> host?</div>
+    <button class="opt">The production URL the public visits after you publish it</button>
+    <button class="opt">The local dev proxy that runs when you type aem up</button>
+    <button class="opt">The staging preview URL that Sidekick's Preview updates</button>
+    <button class="opt">The GitHub repository URL where the code sync app runs</button>
+    <div class="feedback"
+      data-correct="Exactly — .aem.page is preview/staging; .aem.live is production. Preview and Publish are the two Sidekick buttons."
+      data-wrong="Re-read 'The two environments'. .aem.page is the preview/staging host; .aem.live is production."></div>
+  </div>
+
+  <div class="quiz" data-answer="0">
+    <div class="q">Which file maps a URL path to its content source?</div>
+    <button class="opt"><code>fstab.yaml</code> — the mountpoints config in your repo</button>
+    <button class="opt"><code>.content.xml</code> — the JCR node definition file</button>
+    <button class="opt"><code>dispatcher.any</code> — the cache farm configuration</button>
+    <button class="opt"><code>package.json</code> — the npm project manifest file</button>
+    <div class="feedback"
+      data-correct="Correct — fstab.yaml mountpoints tie each path to its Drive/SharePoint/DA source."
+      data-wrong="Re-read 'What connects a doc to your project?'. It's fstab.yaml and its mountpoints."></div>
+  </div>
+
+  <h2>Do this next (10 min)</h2>
+  <p>Install Sidekick, open the boilerplate's demo doc (or your own), and run one full
+  loop: edit → Preview → check <code>.aem.page</code> → Publish → check <code>.aem.live</code>.
+  The primary source walks the authoring flow:</p>
+  <blockquote>
+    <a href="https://www.aem.live/docs/authoring">aem.live — Authoring</a>
+    — the canonical guide to documents, Preview, and Publish.
+  </blockquote>
+  <p>Your tangible win: the <em>same</em> path showing different content on
+  <code>.aem.page</code> vs <code>.aem.live</code> until you hit Publish.</p>
+
+  <div class="note">
+    <strong>I'm your teacher — ask me anything.</strong> Sidekick not showing your project?
+    Confused about which branch maps to which preview URL, or how SharePoint auth differs
+    from Google Drive? Ask. Next lesson: sections vs. blocks vs. default content — the
+    deeper authoring model.
+  </div>
+
+  <p class="nav" style="margin-top:2.5rem">
+    <a href="0002-aem-up-boilerplate.html">← Lesson 02: Boilerplate &amp; local dev</a>
+    · <a href="../index.html">Index</a>
+  </p>
+
+  <footer>
+    Lesson 03 · <a href="../MISSION.md">Mission</a> ·
+    <a href="../RESOURCES.md">Resources</a><br>
+    Publishing questions? Real EDS devs answer fast on the
+    <a href="https://discord.gg/aem-live">AEM Live Discord</a>.
+  </footer>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
