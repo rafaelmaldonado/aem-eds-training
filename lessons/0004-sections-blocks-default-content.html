@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson 4 — Sections, Blocks &amp; Default Content</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <p class="nav"><a href="../index.html">← Index</a> · Lesson 04 · AEM Edge Delivery Services</p>
+  <h1>Sections, Blocks &amp; Default Content</h1>
+  <p class="subtitle">The three-layer anatomy of an EDS page — and which one a table becomes.</p>
+
+  <p>In <a href="0001-doc-to-block.html">Lesson 1</a> you saw a table become a block. But a
+  real page is more than blocks: it has plain paragraphs, headings, images, and it's split
+  into bands. This lesson names the three layers EDS builds from a document, so you always
+  know <strong>what a given piece of the doc turns into</strong>. In classic AEM you thought
+  in <em>parsys → components</em>; here you think in <em>sections → default content + blocks</em>.</p>
+
+  <div class="aha">
+    <strong>The unlearning:</strong> Not everything is a component. Most content is
+    <strong>default content</strong> — headings, paragraphs, lists, links, images rendered
+    straight from the doc with <em>no</em> block, no JS. A <strong>block</strong> (a table)
+    is the exception, used only when content needs custom structure or behavior. And a
+    <strong>section</strong> (a <code>---</code> in the doc) is just a grouping band, like a
+    parsys column — not a component at all.
+  </div>
+
+  <h2>The three layers</h2>
+  <p>Every EDS page decomposes into exactly these, top to bottom
+  (<a href="https://www.aem.live/developer/markup-sections-blocks">source</a>):</p>
+  <div class="contrast">
+    <div class="old head">Layer</div>
+    <div class="new head">What it is in the doc → DOM</div>
+    <div class="old"><strong>Section</strong></div>
+    <div class="new">A band of content. A <code>---</code> (horizontal rule) in the doc splits
+      sections. Each becomes a <code>&lt;div class="section"&gt;</code>.</div>
+    <div class="old"><strong>Default content</strong></div>
+    <div class="new">Everything that isn't a table: headings, text, lists, images, links.
+      Rendered as plain semantic HTML — no block, no decorate.</div>
+    <div class="old"><strong>Block</strong></div>
+    <div class="new">A table whose first cell names it (e.g. <code>Cards</code>). Becomes
+      <code>&lt;div class="cards block"&gt;</code> and gets a <code>decorate()</code> run.</div>
+  </div>
+
+  <h2>Classic AEM vs. EDS</h2>
+  <div class="contrast">
+    <div class="old head">Classic AEM</div>
+    <div class="new head">Edge Delivery</div>
+    <div class="old">Layout container / responsive grid</div>
+    <div class="new">Section (split by <code>---</code>)</div>
+    <div class="old">Text / Image / Title core components</div>
+    <div class="new">Default content (no component needed)</div>
+    <div class="old">Custom authored component + dialog</div>
+    <div class="new">Block (a named table) + <code>decorate()</code></div>
+    <div class="old">Component group in the parsys allow-list</div>
+    <div class="new">Block name = the folder in <code>/blocks/</code></div>
+  </div>
+
+  <h2>What a section looks like in the DOM</h2>
+  <p>Two paragraphs, a <code>---</code>, then a Cards block produces two sections — the first
+  is pure default content, the second wraps a block
+  (<a href="https://www.aem.live/developer/markup-sections-blocks">source</a>):</p>
+<pre><code>&lt;main&gt;
+  &lt;div class="section"&gt;           &lt;!-- section 1: default content --&gt;
+    &lt;h1&gt;Welcome&lt;/h1&gt;
+    &lt;p&gt;Plain paragraph, no block.&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="section"&gt;           &lt;!-- section 2: after the --- --&gt;
+    &lt;div class="cards block"&gt;...&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/main&gt;</code></pre>
+
+  <div class="note">
+    <strong>Section metadata.</strong> A table named <code>Section Metadata</code> inside a
+    section sets attributes on that band (e.g. a <code>Style</code> key adds a class you can
+    target in CSS). It's the closest thing to a layout-container dialog — but it's just
+    another table (<a href="https://www.aem.live/developer/markup-sections-blocks">source</a>).
+  </div>
+
+  <h2>The rule of thumb</h2>
+  <p>Reach for a <strong>block</strong> only when default content can't express what you need —
+  custom layout, grouping, or client-side behavior. If a heading and a paragraph do the job,
+  that's default content and you write <em>no code at all</em>. This is the opposite instinct
+  from classic AEM, where almost everything was a component.</p>
+
+  <h2>Check yourself</h2>
+  <p>Answer from memory before scrolling back.</p>
+
+  <div class="quiz" data-answer="2">
+    <div class="q">In a document, what creates a new <strong>section</strong>?</div>
+    <button class="opt">A table whose first cell says <code>Section</code></button>
+    <button class="opt">A page break inserted from the Docs menu</button>
+    <button class="opt">A horizontal rule — <code>---</code> — between content</button>
+    <button class="opt">Any heading of level <code>H2</code> or above</button>
+    <div class="feedback"
+      data-correct="Right — a --- horizontal rule splits sections, each becoming a div.section."
+      data-wrong="Re-read 'The three layers'. A --- (horizontal rule) splits sections."></div>
+  </div>
+
+  <div class="quiz" data-answer="1">
+    <div class="q">A plain heading and two paragraphs (no table) render as…</div>
+    <button class="opt">An empty block that needs a decorate() to appear</button>
+    <button class="opt">Default content — semantic HTML, no block, no JS</button>
+    <button class="opt">A Text core component pulled from the JCR</button>
+    <button class="opt">Nothing, until you wrap them in a named table</button>
+    <div class="feedback"
+      data-correct="Exactly — that's default content. No block, no code. Blocks are the exception."
+      data-wrong="Re-read the 'unlearning' box. Non-table content is default content — plain HTML, no block."></div>
+  </div>
+
+  <div class="quiz" data-answer="0">
+    <div class="q">When should you build a <strong>block</strong> instead of default content?</div>
+    <button class="opt">Only when content needs custom structure or client-side behavior</button>
+    <button class="opt">For every paragraph, to match the classic component model</button>
+    <button class="opt">Whenever the page has more than one section band</button>
+    <button class="opt">Any time an image appears alongside text on the page</button>
+    <div class="feedback"
+      data-correct="Correct — blocks are the exception, for custom layout/behavior. Otherwise use default content."
+      data-wrong="Re-read 'The rule of thumb'. A block is only for custom structure or behavior."></div>
+  </div>
+
+  <h2>Do this next (10 min)</h2>
+  <p>Open any published EDS page's <code>.plain.html</code> (append it to the path) and read
+  the source: count the <code>div.section</code> bands, spot which content is plain default
+  content, and find the one or two <code>div.block</code> wrappers. Then read the canonical
+  reference:</p>
+  <blockquote>
+    <a href="https://www.aem.live/developer/markup-sections-blocks">aem.live — Markup, Sections, Blocks &amp; Auto Blocking</a>
+    — the canonical anatomy of an EDS page.
+  </blockquote>
+  <p>Your tangible win: pointing at any part of a rendered page and naming it —
+  section, default content, or block.</p>
+
+  <div class="note">
+    <strong>I'm your teacher — ask me anything.</strong> Fuzzy on Section Metadata, or on
+    auto-blocking (where the pipeline synthesizes a block from default content)? Ask. Next
+    lesson: build a custom block hands-on — decorate + CSS — now that you know when a block
+    is the right tool.
+  </div>
+
+  <p class="nav" style="margin-top:2.5rem">
+    <a href="0003-preview-publish-sidekick.html">← Lesson 03: Content, Preview &amp; Publish</a>
+    · <a href="../index.html">Index</a>
+  </p>
+
+  <footer>
+    Lesson 04 · <a href="../MISSION.md">Mission</a> ·
+    <a href="../RESOURCES.md">Resources</a><br>
+    Authoring questions? Real EDS devs answer fast on the
+    <a href="https://discord.gg/aem-live">AEM Live Discord</a>.
+  </footer>
+  <script src="../assets/quiz.js"></script>
+</body>
+</html>
